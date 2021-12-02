@@ -9,7 +9,7 @@ import (
 )
 
 func getDepthsFromFile(fileName string) ([]int, error) {
-	file, err := os.Open("input.txt")
+	file, err := os.Open(fileName)
 	if err != nil {
 		return nil, err
 	}
