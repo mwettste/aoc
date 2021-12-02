@@ -8,6 +8,11 @@ import (
 	"strings"
 )
 
+type command struct {
+	direction string
+	units     int
+}
+
 func get_instruction_lines(file_name string) ([]string, error) {
 	file, err := os.Open(file_name)
 	if err != nil {
@@ -26,38 +31,38 @@ func get_instruction_lines(file_name string) ([]string, error) {
 	return instruction_lines, nil
 }
 
-func parse_instruction(instruction string) (direction string, distance int, err error) {
+func parse_instruction(instruction string) (cmd command, err error) {
 	splitted_inst := strings.Split(instruction, " ")
-	direction = splitted_inst[0]
-	distance, err = strconv.Atoi(splitted_inst[1])
+	cmd.direction = splitted_inst[0]
+	cmd.units, err = strconv.Atoi(splitted_inst[1])
 
 	if err != nil {
-		return "", 0, err
+		return cmd, err
 	}
 
-	return direction, distance, nil
+	return cmd, nil
 }
 
 func part1(instructions []string) {
 	pos_x, pos_y := 0, 0
 
 	for _, instruction := range instructions {
-		direction, distance, err := parse_instruction(instruction)
+		cmd, err := parse_instruction(instruction)
 
 		if err != nil {
 			fmt.Printf("Error parsing instruction: %s\n", err.Error())
 			return
 		}
 
-		switch direction {
+		switch cmd.direction {
 		case "forward":
-			pos_x += distance
+			pos_x += cmd.units
 		case "down":
-			pos_y += distance
+			pos_y += cmd.units
 		case "up":
-			pos_y -= distance
+			pos_y -= cmd.units
 		default:
-			fmt.Printf("Invalid direction: %s", direction)
+			fmt.Printf("Invalid direction: %s", cmd.direction)
 		}
 	}
 
@@ -69,23 +74,23 @@ func part2(instructions []string) {
 	pos_x, pos_y := 0, 0
 	aim := 0
 	for _, instruction := range instructions {
-		direction, distance, err := parse_instruction(instruction)
+		cmd, err := parse_instruction(instruction)
 
 		if err != nil {
 			fmt.Printf("Error parsing instruction: %s\n", err.Error())
 			return
 		}
 
-		switch direction {
+		switch cmd.direction {
 		case "forward":
-			pos_x += distance
-			pos_y += aim * distance
+			pos_x += cmd.units
+			pos_y += aim * cmd.units
 		case "down":
-			aim += distance
+			aim += cmd.units
 		case "up":
-			aim -= distance
+			aim -= cmd.units
 		default:
-			fmt.Printf("Invalid direction: %s", direction)
+			fmt.Printf("Invalid direction: %s", cmd.direction)
 		}
 	}
 
