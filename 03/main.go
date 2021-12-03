@@ -24,28 +24,38 @@ func get_lines(file_name string) ([]string, error) {
 	return instruction_lines, nil
 }
 
+func most_and_least(lines []string, index int) (most rune, least rune) {
+	zeros, ones := 0, 0
+	for _, line := range lines {
+		if line[index] == '0' {
+			zeros++
+		} else {
+			ones++
+		}
+	}
+
+	if zeros > ones {
+		return '0', '1'
+	} else {
+		return '1', '0'
+	}
+}
+
 func part1(lines []string) {
-	column_count := len(lines[0])
-	line_count := len(lines)
-	ones := 0
-	zeros := 0
 	gamma := 0
 	epsilon := 0
-	for column := 0; column < column_count; column++ {
-		ones = 0
-		zeros = 0
-		for line := 0; line < line_count; line++ {
-			if lines[line][column] == '0' {
-				zeros++
-			} else {
-				ones++
-			}
-		}
+
+	for column_index := range lines[0] {
+		most, least := most_and_least(lines, column_index)
+
 		gamma <<= 1
 		epsilon <<= 1
-		if ones > zeros {
+
+		if most == '1' {
 			gamma |= 1
-		} else {
+		}
+
+		if least == '1' {
 			epsilon |= 1
 		}
 	}
