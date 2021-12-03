@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 )
 
 func get_lines(file_name string) ([]string, error) {
@@ -61,11 +62,43 @@ func part1(lines []string) {
 	}
 
 	fmt.Printf("Part1 - Gamma: %d - Epsilon: %d\n", gamma, epsilon)
-	fmt.Printf("Part1 Solution: %d", gamma*epsilon)
+	fmt.Printf("Part1 Solution: %d\n", gamma*epsilon)
+}
+
+func carbon_filter(most rune, least rune) rune {
+	return most
+}
+
+func co2_filter(most rune, least rune) rune {
+	return least
+}
+
+func filter_numbers(lines []string, filter func(rune, rune) rune) int64 {
+	remaining_lines := make([]string, len(lines))
+	copy(remaining_lines, lines)
+
+	column_index := 0
+	for len(remaining_lines) > 1 {
+		new_remaining := make([]string, 0, len(remaining_lines))
+		target_rune := filter(most_and_least(remaining_lines, column_index))
+		for _, line := range remaining_lines {
+			if rune(line[column_index]) == target_rune {
+				new_remaining = append(new_remaining, line)
+			}
+		}
+
+		remaining_lines = new_remaining[:]
+		column_index++
+	}
+
+	rating, _ := strconv.ParseInt(remaining_lines[0], 2, 32)
+	fmt.Printf("Rating: %d\n", rating)
+	return rating
 }
 
 func part2(lines []string) {
-
+	result := filter_numbers(lines, carbon_filter) * filter_numbers(lines, co2_filter)
+	fmt.Printf("Part2 Solution: %d\n", result)
 }
 
 func main() {
